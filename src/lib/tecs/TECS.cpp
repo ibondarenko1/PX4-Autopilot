@@ -224,8 +224,6 @@ void TECSControl::initialize(const Setpoint &setpoint, const Input &input, Param
 
 	AltitudePitchControl control_setpoint;
 
-	control_setpoint.tas_setpoint = setpoint.tas_setpoint;
-
 	control_setpoint.tas_rate_setpoint = _calcAirspeedControlOutput(setpoint, input, param, flag);
 
 	control_setpoint.altitude_rate_setpoint = _calcAltitudeControlOutput(setpoint, input, param);
@@ -269,7 +267,6 @@ void TECSControl::update(const float dt, const Setpoint &setpoint, const Input &
 
 	AltitudePitchControl control_setpoint;
 
-	control_setpoint.tas_setpoint = setpoint.tas_setpoint;
 	control_setpoint.tas_rate_setpoint = _calcAirspeedControlOutput(setpoint, input, param, flag);
 
 	if (PX4_ISFINITE(setpoint.altitude_rate_setpoint_direct)) {
@@ -715,7 +712,6 @@ void TECS::initialize(const float altitude, const float altitude_rate, const flo
 	control_setpoint.altitude_reference = _altitude_reference_model.getAltitudeReference();
 	control_setpoint.altitude_rate_setpoint_direct =
 		_altitude_reference_model.getAltitudeReference().alt_rate; // init to reference altitude rate
-	control_setpoint.tas_setpoint = equivalent_airspeed * eas_to_tas;
 
 	const TECSControl::Input control_input{ .altitude = altitude,
 						.altitude_rate = altitude_rate,
@@ -779,7 +775,6 @@ void TECS::update(float pitch, float altitude, float hgt_setpoint, float EAS_set
 		TECSControl::Setpoint control_setpoint;
 		control_setpoint.altitude_reference = _altitude_reference_model.getAltitudeReference();
 		control_setpoint.altitude_rate_setpoint_direct = _altitude_reference_model.getHeightRateSetpointDirect();
-		control_setpoint.tas_setpoint = calcTrueAirspeedSetpoint(eas_to_tas, EAS_setpoint);
 
 		const TECSControl::Input control_input{ .altitude = altitude,
 							.altitude_rate = hgt_rate,
